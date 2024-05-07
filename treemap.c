@@ -49,51 +49,56 @@ TreeMap * createTreeMap(int (*lower_than) (void* key1, void* key2)) {
 
 void insertTreeMap(TreeMap * tree, void* key, void * value) 
 {
-    if (tree == NULL || tree->root == NULL)
+    if (tree == NULL) return; // Asegúrate de que el árbol no sea nulo
+
+    if (tree->root == NULL) // Si el árbol está vacío
     {
         tree->root = createTreeNode(key, value);
+        tree->current = tree->root; // Apunta al nodo recién insertado
         return;
     }
-    TreeNode * aux = tree->root;
-    while (aux != NULL)
+
+    TreeNode * aux = tree->root; // Nodo auxiliar para recorrer el árbol
+
+    while (aux != NULL) // Mientras no hayas llegado al final del árbol
+    {
+        if (is_equal(tree, key, aux->pair->key)) // Si el nodo ya existe
         {
-            if (is_equal(tree, key, aux->pair->key))
+            tree->current = aux; // Actualiza el current
+            return; // No hagas nada más
+        }
+
+        if (tree->lower_than(key, aux->pair->key)) // Si la clave es menor, ve a la izquierda
+        {
+            if (aux->left == NULL) // Si no hay nodo a la izquierda
             {
+                aux->left = createTreeNode(key, value); // Crea el nodo
+                aux->left->parent = aux; // Establece el padre
+                tree->current = aux->left; // Actualiza el current
                 return;
-            }
-            if (tree->lower_than(key, aux->pair->key))
-            {
-                if (aux->left == NULL)
-                {
-                    aux->left = createTreeNode(key, value);
-                    aux->left->parent = aux;
-                    return;
-                }
-                else
-                {
-                    aux = aux->left;
-                    
-                }
-                
             }
             else
             {
-                if (aux->right == NULL)
-                {
-                    aux->right = createTreeNode(key, value);
-                    aux->right->parent = aux;
-                    return;
-                }
-                else
-                {
-                    aux = aux->right;
-                }
+                aux = aux->left; // Sigue hacia la izquierda
             }
         }
-
-    
-
+        else // Si la clave es mayor, ve a la derecha
+        {
+            if (aux->right == NULL) // Si no hay nodo a la derecha
+            {
+                aux->right = createTreeNode(key, value); // Crea el nodo
+                aux->right->parent = aux; // Establece el padre
+                tree->current = aux->right; // Actualiza el current
+                return;
+            }
+            else
+            {
+                aux = aux->right; // Sigue hacia la derecha
+            }
+        }
+    }
 }
+
 
 TreeNode * minimum(TreeNode * x){
 
