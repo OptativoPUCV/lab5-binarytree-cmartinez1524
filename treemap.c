@@ -159,6 +159,11 @@ void removeNode(TreeMap * tree, TreeNode* node)
             }
         }
     }
+
+    // Libera el nodo y su `pair`
+    free(node->pair->key);
+    free(node->pair);
+
 }
 
 
