@@ -200,29 +200,38 @@ Pair * searchTreeMap(TreeMap * tree, void* key)
 
 Pair * upperBound(TreeMap * tree, void* key) 
 {
-    if (tree == NULL || tree->root == NULL) return NULL;
-    TreeNode * aux = tree->root;
-    while (aux != NULL)
-        {
-            if (is_equal(tree, key, aux->pair->key))
-            {
-                tree->current = aux;
-                return aux->pair;
-            }
-            if (tree->lower_than(key, aux->pair->key))
-            {
-                aux = aux->left;
-                
-            }
-            else
-            {
-                aux = aux->right;
-                
-            }
-            
-        }
-    return NULL;
+    if (tree == NULL || tree->root == NULL) return NULL; // Verifica si el árbol está vacío
 
+    TreeNode * aux = tree->root; // Nodo auxiliar para recorrer el árbol
+    TreeNode * candidate = NULL; // Último candidato para upper bound
+
+    while (aux != NULL) // Recorre el árbol
+    {
+        if (is_equal(tree, key, aux->pair->key)) // Si la clave es igual, este es el upper bound
+        {
+            tree->current = aux; // Actualiza el current
+            return aux->pair; // Devuelve el par
+        }
+
+        if (tree->lower_than(key, aux->pair->key)) // Si el key es menor que el del nodo actual
+        {
+            candidate = aux; // Actualiza el candidato, ya que podría ser el upper bound
+            aux = aux->left; // Continúa hacia la izquierda
+        }
+        else // Si el key es mayor o igual que el del nodo actual
+        {
+            aux = aux->right; // Continúa hacia la derecha
+        }
+    }
+
+    // Al final del recorrido, el candidato es el mejor upper bound encontrado
+    if (candidate != NULL) 
+    {
+        tree->current = candidate; // Actualiza el current
+        return candidate->pair; // Devuelve el par del candidato
+    }
+
+    return NULL; // Si no se encuentra un upper bound
 }
 
 Pair * firstTreeMap(TreeMap * tree) 
