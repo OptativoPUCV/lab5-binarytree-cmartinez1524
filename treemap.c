@@ -112,50 +112,41 @@ TreeNode * minimum(TreeNode * x)
 
 void removeNode(TreeMap * tree, TreeNode* node) 
 {
-    if (tree == NULL || node == NULL) return; // Verifica que ni el árbol ni el nodo sean nulos
+    if (tree == NULL || node == NULL) return; 
 
-    if (node->left == NULL && node->right == NULL) { // Nodo sin hijos
-        // Desconecta el nodo de su padre
+    if (node->left == NULL && node->right == NULL) { 
+       
         if (node->parent == NULL) {
-            tree->root = NULL; // Si el nodo era la raíz
+            tree->root = NULL; 
         } else {
             if (node->parent->left == node) {
-                node->parent->left = NULL; // Elimina del padre izquierdo
+                node->parent->left = NULL;
             } else {
-                node->parent->right = NULL; // Elimina del padre derecho
+                node->parent->right = NULL; 
             }
         }
-    } else if (node->left != NULL && node->right != NULL) { // Nodo con dos hijos
-        // Encuentra el mínimo del subárbol derecho
+    } else if (node->left != NULL && node->right != NULL) { 
+        
         TreeNode * min = minimum(node->right);
-
-        // Guarda el `pair` del nodo a eliminar
         Pair * temp = node->pair; 
-
-        // Reemplaza el `pair` con el `pair` del mínimo
-        node->pair = min->pair; 
-
-        // Elimina el nodo mínimo
+        node->pair = min->pair;
         removeNode(tree, min); 
-
-        // Libera el `pair` antiguo
+        
         free(temp->key); 
         free(temp); 
 
-    } else { // Nodo con un hijo
-        // Encuentra el único hijo
+    } else 
+    { 
         TreeNode * child = node->left != NULL ? node->left : node->right; 
-
-        // Conecta el hijo con el padre del nodo a eliminar
         child->parent = node->parent; 
 
         if (node->parent == NULL) {
-            tree->root = child; // Si el nodo era la raíz
+            tree->root = child; 
         } else {
             if (node == node->parent->left) {
-                node->parent->left = child; // Conecta al padre izquierdo
+                node->parent->left = child; 
             } else {
-                node->parent->right = child; // Conecta al padre derecho
+                node->parent->right = child; 
             }
         }
     }
@@ -200,38 +191,37 @@ Pair * searchTreeMap(TreeMap * tree, void* key)
 
 Pair * upperBound(TreeMap * tree, void* key) 
 {
-    if (tree == NULL || tree->root == NULL) return NULL; // Verifica si el árbol está vacío
+    if (tree == NULL || tree->root == NULL) return NULL; 
 
-    TreeNode * aux = tree->root; // Nodo auxiliar para recorrer el árbol
-    TreeNode * candidate = NULL; // Último candidato para upper bound
+    TreeNode * aux = tree->root; 
+    TreeNode * candidate = NULL;
 
-    while (aux != NULL) // Recorre el árbol
+    while (aux != NULL) 
     {
-        if (is_equal(tree, key, aux->pair->key)) // Si la clave es igual, este es el upper bound
+        if (is_equal(tree, key, aux->pair->key)) 
         {
-            tree->current = aux; // Actualiza el current
-            return aux->pair; // Devuelve el par
+            tree->current = aux;
+            return aux->pair; 
         }
 
-        if (tree->lower_than(key, aux->pair->key)) // Si el key es menor que el del nodo actual
+        if (tree->lower_than(key, aux->pair->key))
         {
-            candidate = aux; // Actualiza el candidato, ya que podría ser el upper bound
-            aux = aux->left; // Continúa hacia la izquierda
+            candidate = aux;
+            aux = aux->left;
         }
-        else // Si el key es mayor o igual que el del nodo actual
+        else
         {
-            aux = aux->right; // Continúa hacia la derecha
+            aux = aux->right;
         }
     }
 
-    // Al final del recorrido, el candidato es el mejor upper bound encontrado
     if (candidate != NULL) 
     {
-        tree->current = candidate; // Actualiza el current
-        return candidate->pair; // Devuelve el par del candidato
+        tree->current = candidate;
+        return candidate->pair;
     }
 
-    return NULL; // Si no se encuentra un upper bound
+    return NULL; 
 }
 
 Pair * firstTreeMap(TreeMap * tree) 
